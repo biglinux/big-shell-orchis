@@ -1,42 +1,29 @@
-# Maintainer: Barnabé di Kartola <barnabedikartola@gmail.com>
+# Maintainer: Tales A. Mendonça <talesam@gmail.com>
 
-pkgname=biglinux-package-template
-pkgdesc="Package template for biglinux"
-# depends=('')
-# makedepends=('')
-# conflicts=('')
+pkgname=big-shell-orchis
+pkgdesc="Orchis Shell Theme Suite for Biglinux"
 pkgver=$(date +%y.%m.%d)
 pkgrel=$(date +%H%M)
 arch=('any')
 license=('GPL3')
-url="https://github.com/biglinux/$pkgname"
+url="https://github.com/vinceliuice/Orchis-theme"
 provides=("$pkgname")
 source=("git+${url}.git")
 md5sums=('SKIP')
-if [ -e "${pkgname}.install" ];then
-    install=${pkgname}.install
-elif [ -e "pkgbuild.install" ];then
-    install=pkgbuild.install
-fi
+
+prepare() {
+    cd "$srcdir/Orchis-theme"
+    ./install.sh -t all
+}
 
 package() {
-    # Verify default folder
-    if [ -d "${srcdir}/${pkgname}/${pkgname}" ]; then
-        InternalDir="${srcdir}/${pkgname}/${pkgname}"
-    else
-        InternalDir="${srcdir}/${pkgname}"
-    fi
+    # Destination directory
+    install -d "${pkgdir}/usr/share/themes"
 
-    # Copy files
-    if [ -d "${InternalDir}/usr" ]; then
-        cp -r "${InternalDir}/usr" "${pkgdir}/"
-    fi
-
-    if [ -d "${InternalDir}/etc" ]; then
-        cp -r "${InternalDir}/etc" "${pkgdir}/"
-    fi
-
-    if [ -d "${InternalDir}/opt" ]; then
-        cp -r "${InternalDir}/opt" "${pkgdir}/"
-    fi
+    # Copy only the required themes
+    for theme_dir in "$HOME/.themes"/*-Dark-Compact; do
+        theme_name=$(basename "$theme_dir")
+        new_theme_name="Big-${theme_name%-Dark-Compact}"
+        cp -r "$theme_dir" "${pkgdir}/usr/share/themes/$new_theme_name"
+    done
 }
