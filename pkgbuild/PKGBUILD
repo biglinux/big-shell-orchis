@@ -23,8 +23,12 @@ package() {
     # Copy only the required themes
     for theme_dir in "$HOME/.themes"/*-Dark-Compact; do
         theme_name=$(basename "$theme_dir")
-        new_theme_name="Big-${theme_name#Orchis-}"
-        new_theme_name="${new_theme_name%-Dark-Compact}"
+        if [[ "$theme_name" == "Orchis-Dark-Compact" ]]; then
+            new_theme_name="Big-Blue"
+        else
+            new_theme_name="Big-${theme_name#Orchis-}"
+            new_theme_name="${new_theme_name%-Dark-Compact}"
+        fi
         cp -r "$theme_dir" "${pkgdir}/usr/share/themes/$new_theme_name"
     done
 }
